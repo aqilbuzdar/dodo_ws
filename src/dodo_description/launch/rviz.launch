@@ -1,0 +1,15 @@
+<launch>
+    <!-- Load the robot description -->
+    <param name="robot_description" command="$(find xacro)/xacro $(find dodo_description)/urdf/model.urdf" />
+
+    <!-- Launch RViz -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find dodo_description)/launch/custom_rviz_config.rviz" output="screen" />
+
+    <!-- Joint State Publisher -->
+    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" output="screen" />
+
+    <!-- Robot State Publisher -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen">
+        <param name="publish_frequency" value="50" />
+    </node>
+</launch>

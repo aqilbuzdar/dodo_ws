@@ -1,0 +1,16 @@
+<launch>
+    <!-- Load the robot description -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find dodo_description)/urdf/model.urdf'" />
+
+    <!-- Add a ground plane and empty world -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find gazebo_ros)/worlds/empty.world" />
+    </include>
+
+    <!-- Spawn the robot in Gazebo -->
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" output="screen"
+      args="-param robot_description -urdf -model dodo_robot -x 0 -y 0 -z 0.5" />
+
+      
+
+</launch>
