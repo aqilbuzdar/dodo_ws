@@ -1,0 +1,34 @@
+<launch>
+  <!-- Load URDF from xacro -->
+  <let name="robot_description" value="$(command 'xacro $(find-pkg-share dodo_description)/urdf/model.urdf')" />
+
+  <!-- Launch Gazebo with empty world -->
+  <executable cmd="gazebo --verbose -s libgazebo_ros_factory.so -s libgazebo_ros_init.so $(find-pkg-share dodo_description)/worlds/empty.world" output="screen"/>
+
+  <!-- Robot State Publisher -->
+  <node pkg="robot_state_publisher" exec="robot_state_publisher" output="screen">
+    <param name="robot_description" value="$(var robot_description)"/>
+    <param name="use_sim_time" value="true"/>
+  </node>
+
+
+
+  <!-- Spawn Robot in Gazebo -->
+  <node pkg="gazebo_ros" exec="spawn_entity.py" output="screen"
+        args="-entity dodo_robot -topic robot_description -x 0 -y 0 -z 0.5"
+        launch-prefix="bash -c 'sleep 3; $0 $@' "/>
+
+  <!-- SLAM Toolbox Node -->
+  <node pkg="slam_toolbox" exec="async_slam_toolbox_node" name="slam_toolbox" output="screen">
+    <param name="use_sim_time" value="true"/>
+    <param from="$(find-pkg-share dodo_description)/config/slam.yaml" />
+    <remap from="/tf" to="tf"/>
+    <remap from="/tf_static" to="tf_static"/>
+    <remap from="/scan" to="scan"/>
+  </node>
+
+  <!-- RViz -->
+  <node pkg="rviz2" exec="rviz2" output="screen" args="-d $(find-pkg-share dodo_description)/rviz/robot.rviz">
+    <param name="use_sim_time" value="true"/>
+  </node>
+</launch>
